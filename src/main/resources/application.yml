@@ -1,0 +1,28 @@
+
+# logging
+logging:
+  level:
+    me: DEBUG
+    io.github.resilience4j.circuitbreaker: DEBUG
+
+# actuator (Circuit Breaker 모니터링 추가.)
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,circuitbreakers
+
+# circuitbreaker (resilience4j)
+resilience4j:
+  circuitbreaker:
+    instances:
+      myServiceCircuitBreaker:
+        registerHealthIndicator: true    # Health Indicator 등록.
+        failureRateThreshold: 20         # 실패율이 20%일 경우 Circuit Breaker가 열린다.
+        slowCallDurationThreshold: 1000  # 1000ms(1초) 이상 소요 시 실패로 간주.
+        waitDurationInOpenState: 10000   # Circuit Breaker가 열린 상태에서 10초 후에 상태를 재검토.
+        slidingWindowSize: 4             # Sliding window 크기 4보다 많은 요청에서 실패율을 계산하도록 한다.
+        permittedNumberOfCallsInHalfOpenState: 1  # Half-open 상태에서 허용하는 최대 요청 수.
+        minimumNumberOfCalls: 2          # 최소 호출 횟수 2번 이상. (이보다 적으면 실패율 계산 안 함.)
+
+
